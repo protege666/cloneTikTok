@@ -1,0 +1,68 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Like {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  likeTimestamp DateTime?
+  video         Video?    @relation(fields: [videoId], references: [id])
+  videoId       String?
+  user          User?     @relation(fields: [userId], references: [id])
+  userId        String?
+}
+
+model Video {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String?
+  description String?
+  uploadDate  DateTime?
+  fileUrl     String?
+  views       Int?
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?
+  likes       Like[]
+  comments    Comment[]
+}
+
+model Comment {
+  id               String    @id @default(cuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  commentTimestamp DateTime?
+  commentText      String?
+  user             User?     @relation(fields: [userId], references: [id])
+  userId           String?
+  video            Video?    @relation(fields: [videoId], references: [id])
+  videoId          String?
+}
+
+model User {
+  id                    String    @id @default(cuid())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  firstName             String?
+  lastName              String?
+  username              String    @unique
+  email                 String?   @unique
+  password              String
+  roles                 Json
+  telegramUserId        String?
+  profilePictureUrl     String?
+  dateJoined            DateTime?
+  userProfilePictureUrl String?
+  telegramId            String?
+  profilePhotoUrl       String?
+  joinedDate            DateTime?
+  videos                Video[]
+  likes                 Like[]
+  comments              Comment[]
+}
